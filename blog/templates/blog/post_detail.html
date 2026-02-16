@@ -1,0 +1,46 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <h2 class="card-title">{{ post.title }}</h2>
+        <div class="card-text">
+            {% for image in post.images.all %}
+            <div class="img-container img-{{ image.position }}">
+                <img src="{{ image.image.url }}" class="img-fluid img-{{ image.position }}" alt="Image for {{ post.title }}">
+                <p>{{ image.text_wrap }}</p>
+            </div>
+            {% if forloop.counter|divisibleby:2 %}
+                <!-- Example Ad Spot -->
+                <div class="ad-container">
+                    <p>Ad spot: This is where your ad could be!</p>
+                </div>
+            {% endif %}
+            {% endfor %}
+            {{ post.content|safe }}
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <h3>Comments</h3>
+        {% for comment in comments %}
+        <div class="comment">
+            <p><strong>{{ comment.author }}</strong>: {{ comment.content }}</p>
+            <small>{{ comment.date_posted }}</small>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="card-footer">
+        {% if user.is_authenticated %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Add Comment</button>
+        </form>
+        {% else %}
+        <p>You must be logged in to add a comment.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
